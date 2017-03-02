@@ -1,0 +1,80 @@
+comando =  #Gets the user's command line
+int starting_adress = 0
+public class interp{
+        static int PC
+        static int AC
+        static int instr
+        static int instr_type
+        static int data_loc
+        static int data
+        static bool run_bit = true
+        
+        public static void interpret(int memory[], int starting_adress){
+                PC = co
+                while run_bit:
+                    instr = readCommand('comand.txt', PC)
+                    PC = PC + 1
+                    instr_type = get_instr_type(instr)
+                    data_loc = find_data(instr)
+                    if data_loc >= 0:
+                        data = memory[data_loc]
+                    execute(instr_type,data)
+                }  
+        
+        private static int get_instr_type(PC){
+                operation = command[0:2] # gets the operation inside de command
+                #converts it
+                if operation =="00":
+                        operation ="+"
+                elif operation == "01":
+                        operation ="-"
+                elif operation == "10":
+                        operation ="*"
+                elif operation == "11":
+                        operation ="/"
+        
+                return operation # returns the operation
+                }
+        private static int find_data(int instr){
+                registerA = command[2:10]
+                registerA = command[11:18]# gets the register inside de command
+                return register #returns the register
+                }
+        private static void execute(int type, int data){
+                
+                }
+               
+        
+        }
+}
+def readCommand(fileName):
+	file = open(fileName,"r") #open the file
+	command = file.read() # reads it
+	file.close() #closes it
+	return command # return the command
+
+def  readOperation(command):
+	operation = command[0:2] # gets the operation inside de command
+	#converts it
+	if operation =="00":
+		operation ="+"
+	elif operation == "01":
+		operation ="-"
+	elif operation == "10":
+		operation ="*"
+	elif operation == "11":
+		operation ="/"
+
+	return operation # returns the operation
+
+def readRegister(command, a , b):
+	register = command[a:b] # gets the register inside de command
+	return register #returns the register
+
+def getNumber(register):
+	file = open("registrators.txt","r") #open the file
+	for line in file: # reads it line by line
+		if line[0:6] == register: #if the registrator is found
+			number = line[7:10] # gets the number related to it
+			return int(number) # return the number
+	print("Registrador inválido")
