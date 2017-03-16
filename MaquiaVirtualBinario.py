@@ -6,10 +6,10 @@ data_loc = 0
 data = 0
 run_bit=True
 
-arqPrograma = open("programa.txt", "r")
+arqPrograma = open("ProgramaBinario.txt", "r")
 programa = arqPrograma.read().split("\n")
 
-arqMemory = open("memory.txt", "r")
+arqMemory = open("Memory.txt", "r")
 memory = arqMemory.read().split("\n")
 
 while run_bit:

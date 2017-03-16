@@ -1,0 +1,14 @@
+a = 10
+add 10
+save a
+
+b = 20
+add 20
+save b
+
+
+c = a + B
+load a
+load b
+sum a b
+save c
