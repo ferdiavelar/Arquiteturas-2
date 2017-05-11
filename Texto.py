@@ -28,7 +28,5 @@ while run_bit:
         AC = AC - data
     elif instr_type == "div":
         AC = AC/data
-    elif instr_type == "="
-        
 
     print("AC: ", AC)

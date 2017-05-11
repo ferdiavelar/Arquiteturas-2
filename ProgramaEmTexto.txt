@@ -1,4 +1,4 @@
 add 4
-mul 6 
+mul 6
 sub 5
 div 4

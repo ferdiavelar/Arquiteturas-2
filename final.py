@@ -10,9 +10,8 @@ def interpreter():
     arqPrograma = open("ProgramaBinario.txt", "r")
     programa = arqPrograma.read().split("\n")
 
-    #arqMemory = open("Memory.txt", "r")
-    #memory = arqMemory.read().split("\n")
-    memory = [None, None, None,None, None, None]
+    memory = [None, None, None,None, None, None,None, None, None,None, None, None,None, None, None,None, None, None]
+    cacheV = [None,None,None,None]
 
     registrador = ['vazio','vazio','vazio']
 
@@ -20,41 +19,57 @@ def interpreter():
         #print("AC =", AC)
         instr = programa[PC]
         PC = PC + 1
+        x=0;
         if len(instr)==0: break
 
         instr_type = get_instr_type(instr)
         if instr_type == "00":
             store(instr,memory)
         elif instr_type == "01":
-            load(instr,registrador,memory)
+            load(instr,registrador,memory,x)
         elif instr_type=="10":
             resultado = operacao(instr,registrador);
 
-        #data = find_data(instr,memory)
-        #AC = execute(instr_type,data,AC)
-
-    print("Memoria = ",memory)
-    print("Registrador = ",registrador)
     registrador = ['vazio','vazio','vazio']
-
+    print("Memoria = ",memory)
 
 def get_instr_type(instr):
     instr_type = instr[0:2]
     #00-Storage normal
     #01-load
     #10-operacao
-    #11-11
+    #11-store de operacao
     return instr_type
 
 def store(instr,memory):
     localMemoria = int(instr[4:8],2)
     valorMemoria = int(instr[8:16],2)
     memory[localMemoria] = valorMemoria
+    print(memory)
     print("Variavel salva com valor ",valorMemoria)
 
-def load(instr,registrador,memory):
-    localMemoria = int(instr[12:16],2)
-    valor = memory[localMemoria]
+def cacheF(instr,memory,x):
+    if x==0:
+        if instr[12] == 0:
+            cacheV = [memory[0],memory[1],memory[2],memory[3],memory[4],memory[5],memory[6],memory[7],0]
+            print(cacheV)
+            x=1
+        else:
+            cacheV = [memory[8],memory[9],memory[10],memory[11],memory[12],memory[13],memory[14],memory[15],1]
+            print(cacheV)
+            x=1
+    elif instr[12] == cacheV[8]:
+        print("Cache hit")
+        valor = cacheV[int(instr[13:16],2)]
+        return valor
+    else:
+        print("cache miss")
+        x=0;
+        cacheF(instr,memory,x)
+
+
+def load(instr,registrador,memory,x):
+    valor = cacheF(instr,memory,x)
     for i in range(0,3):
         if registrador[i] == 'vazio':
             registrador[i] = valor
@@ -78,10 +93,13 @@ def operacao(instr,registrador):
         resul = int(registrador[0]) * int(registrador[1])
         print("Operacao de *")
 
+    registrador[2] = resul
 
     print("resultado = ",resul)
 
-    return registrador[0]
+    print("Registrador = ",registrador)
+
+    return resul
 
 def storeOperacao(instr,resultado):
     localMemoria = int(instr_type[12:16],2)
