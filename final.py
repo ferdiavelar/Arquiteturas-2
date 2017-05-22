@@ -10,23 +10,22 @@ def interpreter():
     arqPrograma = open("ProgramaBinario.txt", "r")
     programa = arqPrograma.read().split("\n")
 
-    memory = [None, None, None,None, None, None,None, None, None,None, None, None,None, None, None,None, None, None]
+    memory = [None, 121, None,None, None, None,None, None, None,None, None, None,None, None, None,None, None, None]
     cacheV = [None,None,None,None]
 
     registrador = ['vazio','vazio','vazio']
-
+    x=0;
     while run_bit:
         #print("AC =", AC)
         instr = programa[PC]
         PC = PC + 1
-        x=0;
         if len(instr)==0: break
 
         instr_type = get_instr_type(instr)
         if instr_type == "00":
             store(instr,memory)
         elif instr_type == "01":
-            load(instr,registrador,memory,x)
+            x,cacheV = load(instr,registrador,memory,cacheV,x)
         elif instr_type=="10":
             resultado = operacao(instr,registrador);
 
@@ -45,37 +44,53 @@ def store(instr,memory):
     localMemoria = int(instr[4:8],2)
     valorMemoria = int(instr[8:16],2)
     memory[localMemoria] = valorMemoria
-    print(memory)
+    #print(memory)
     print("Variavel salva com valor ",valorMemoria)
 
-def cacheF(instr,memory,x):
+def cacheFill(instr,memory,x):
     if x==0:
-        if instr[12] == 0:
-            cacheV = [memory[0],memory[1],memory[2],memory[3],memory[4],memory[5],memory[6],memory[7],0]
-            print(cacheV)
-            x=1
+        if instr[13]=='0':
+            cacheV=[memory[0],memory[1],memory[2],memory[3],memory[4],memory[5],memory[6],memory[7],0]
+            print("cache=",cacheV)
         else:
-            cacheV = [memory[8],memory[9],memory[10],memory[11],memory[12],memory[13],memory[14],memory[15],1]
-            print(cacheV)
-            x=1
-    elif instr[12] == cacheV[8]:
-        print("Cache hit")
-        valor = cacheV[int(instr[13:16],2)]
-        return valor
+            cacheV=[memory[8],memory[9],memory[10],memory[11],memory[12],memory[13],memory[14],memory[15],1]
+            #print("cache=",cacheV)
+            print("cache salva 1")
+    return cacheV
+
+
+
+def load(instr,registrador,memory,cacheV,x):
+    valor = 1
+    if x==0:
+        print("Cache Miss 1")
+        cacheV = cacheFill(instr,memory,x)
+        localMemoria = int(instr[12:16],2)
+        valor = cacheV[localMemoria]
+        x=1;
     else:
-        print("cache miss")
-        x=0;
-        cacheF(instr,memory,x)
-
-
-def load(instr,registrador,memory,x):
-    valor = cacheF(instr,memory,x)
+        a = int(cacheV[8])
+        b = int(instr[12])
+        if a==b:
+            print("Cache HIT")
+            localMemoria = int(instr[13:16],2)
+            valor = cacheV[localMemoria]
+            x=1;
+        else:
+            print("Cache Miss")
+            x=0;
+            cacheV = cacheFill(instr,memory,x)
+            localMemoria = int(instr[13:16],2)
+            valor = cacheV[localMemoria]
+    #localMemoria = int(instr[12:16],2)
+    #valor = memory[localMemoria]
     for i in range(0,3):
         if registrador[i] == 'vazio':
             registrador[i] = valor
             break
 
     print("Variavel carregada com valor ",valor)
+    return x,cacheV
 
 def operacao(instr,registrador):
     type =  instr[2:4]
@@ -109,8 +124,13 @@ def storeOperacao(instr,resultado):
 def find_data(instr,memory):
     #localização memoria
     local = instr[4:8]
+    if instr[4] == cacheV[8]:
+        local = instr[5:8]
+    else:
+        cacheFill()
     #Localização valor
     data_loc = int(instr[4:8],2)
+
     data = int(memory[data_loc])
     return data
 
