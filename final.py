@@ -54,8 +54,7 @@ def cacheFill(instr,memory,x):
             print("cache=",cacheV)
         else:
             cacheV=[memory[8],memory[9],memory[10],memory[11],memory[12],memory[13],memory[14],memory[15],1]
-            #print("cache=",cacheV)
-            print("cache salva 1")
+            print("cache=",cacheV)
     return cacheV
 
 
